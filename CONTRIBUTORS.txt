@@ -1,0 +1,15 @@
+Main developer & project supervision:
+ - G. Biagetti
+
+Bluetooth stack integration, general SoC setup, microSD handling:
+ - G. Aliffi
+
+Bluetooth security and encryption and USB commissioning:
+ - B. Gaudenzi
+ - I. Giampieri
+
+SoC power supply setup and PCB sketch:
+ - J. Pagliuca
+
+SoC wakeup from gyro & power management draft code:
+ - L. Schiavone

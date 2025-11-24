@@ -1,0 +1,55 @@
+// peripherals.txt:
+// Usage of SoC peripherals by various subsystems
+
+TIMER0		->	(SoftDevice)
+TIMER1		->			data sample timestamping
+	[0] radio timestamps
+	[1]	emg
+	[3] GYRO
+TIMER2
+TIMER3
+TIMER4
+RTC0		->	(SoftDevice)
+RTC1		->	(APP)	components/libraries/timer/	(app_timer)
+RTC2		->			reserved for future use (time of day service)
+PWM0		->	(EMG)	409.6 kHz clock to ADS1293
+PWM1		->	(LED)	TODO!
+PWM2
+PWM3
+TWIM0		->	(GYRO)	bus to LSM6DSO
+TWIM1		->			reserved for future use (LED controller, other low-rate sensors)
+SPIM2		->	(EMG)	bus to ADS1293
+SPIM3		->			reserved for future use (microSD card)
+GPIOTE[0]	->	(EMG)	EMG_READY detection
+GPIOTE[1]	->	(EMG)	EMG_SS control
+GPIOTE[2]	->	(EMG)	GYRO_INT2 detection
+PPI[0]		->	(EMG)	EMG_READY  -> SPIM2_START
+PPI[1]		->	(EMG)	EMG_READY  -> EMG_SS
+PPI[2]		->	(EMG)	SPIM2_DONE -> EMG_SS
+PPI[3]		->	(GYRO)	GYRO_INT2  -> TWIM0_STARTTX
+
+System power modes:
+
+ - OFF			entered when a low-battery condition is detected or upon request (e.g. for transportation)
+ 		LSM6DSO: both gyro and accelerometer shut down
+ 		ADS1293: powered off
+ 		CPU:     powered off, wakeup on pin-reset or charger connection (VBUS detect?), if low battery condition persists after reset and no charger is connected go back to OFF immediately.
+ 
+ - IDLE			entered after inactivity (advertising timeout)
+ 		LSM6DSO: gyro off, accelerometer set to low ODR with wakeup enabled
+ 		ADS1293: powered off
+ 		CPU:     powered off, wakeup on accelerometer
+ 
+ - ADVERTISING	entered after wake-up or reset
+ 		LSM6DSO: as in IDLE (wake-up signal from LSM restarts advertising timeout)
+ 		ADS1293: as in IDLE (powerd off)
+ 		CPU:     LFCLK crystal active
+ 
+ - CONNECTED
+ 		LSM6DSO: both off
+ 		ADS1293: powered on, stand-by, no clk
+ 		CPU:     LFCLK crystal active
+ 
+ - STREAMING	entered when notifications are enabled
+		LSM/ADS: activate peripherals according to requested service...
+		CPU:     HFCLK crystal active 
